@@ -39,7 +39,8 @@ bytes required = c * 6 + nc * 3 | c = amount of cubes
 One of these colours is not used, meaning there is a limit of 255 colours.
 .vox stores a byte for each voxel which indicates its colour index.
 ```
-bytes required = 1024 + v | v = amount of voxels
+bytes required = p * 1024 + v | v = amount of voxels
+                              | p = if a palette is used ? 1 : 0
 ```
 #### .cvox
 .cvox stores colours and the amounts of voxels/cubes which have that colour.
