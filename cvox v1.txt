@@ -17,6 +17,7 @@ Chunk 'XYZ '    // optional, stores voxels
 // possible extensions
 // Additional chunks can be added for application-specific rendering,
 // these should have identifiers different from the above.
+// These custom chunks may be inserted anywhere except before the 'CVOX' chunk.
 // Chunks with unknown identifiers should be skipped.
 -------------------------------------------------------------------------------
 
@@ -38,6 +39,7 @@ N        |            | chunk content
 -------------------------------------------------------------------------------
 
 4. Chunk id 'SIZE' : model size and position
+The axis of a model is 0, 0, 0.
 -------------------------------------------------------------------------------
 # Bytes  | Type       | Value
 -------------------------------------------------------------------------------
@@ -49,13 +51,13 @@ N        |            | chunk content
 4        | int        | translation z
 -------------------------------------------------------------------------------
 
-5. Chunk id 'CMAP' : maps colours to cubes.
-For example: if CMAP starts with colour red and amount 3,
-then the first 3 cubes in 'CUBE' are red.
+5. Chunk id 'CMAP' : maps colours to cubes
+For example: if CMAP starts with colour cyan and amount 100,
+then the first 100 cubes in 'CUBE' are cyan.
 -------------------------------------------------------------------------------
 # Bytes  | Type       | Value
 -------------------------------------------------------------------------------
-7 x N    | byte       | (alpha, red, green, blue) : 1 byte for each component
+7 x N    | byte       | (red, green, blue, alpha) : 1 byte for each component
                       | 3 byte int for the amount of cubes with this colour
                       | amount can be 0 to store an unused palette colour.
 -------------------------------------------------------------------------------
@@ -68,7 +70,7 @@ then the first 3 cubes in 'CUBE' are red.
                       | (x, y, z) : 1 byte for each high coordinate
 -------------------------------------------------------------------------------
 
-7. Chunk id 'VMAP' : maps N colours to voxels.
+7. Chunk id 'VMAP' : maps N colours to voxels
 For example: if VMAP starts with colour red and amount 3,
 then the first 3 voxels in 'XYZ ' are red.
 -------------------------------------------------------------------------------
