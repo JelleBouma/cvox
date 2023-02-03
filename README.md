@@ -3,7 +3,7 @@
 .cvox is a RIFF-like file format used to store voxel models, it is based on the MagicaVoxel .vox file format (https://github.com/ephtracy/voxel-model) which is used by many applications.
 .cvox is losslessly compressed to be much smaller, and allows any amount of colours to be used, compared to the .vox colour limit of 255.
 
-To illustrate the compression achieved by .cvox I have included the MagicaVoxel example voxels, which have a size of 2,842,706 bytes.
+To illustrate the compression achieved by .cvox I have included the MagicaVoxel example .vox files, which have a combined size of 2,842,706 bytes.
 The equivalent .cvox files have a size of only 312,664 bytes.
 
 For a technical specification of the .cvox file format please see "cvox v1.txt".
