@@ -10,9 +10,12 @@ For a technical specification of the .cvox file format please see "cvox v1.txt".
 In this readme I will give a general outline of the ideas and improvements behind .cvox.
 Some of the ideas of this file format were already thought of by Xless-Qu-dev in this github issue thread: https://github.com/ephtracy/voxel-model/issues/52
 
-This repository also contains a runnable example of vox to cvox (and vice-versa) conversion written in Java.
+## Conversion
+This repository contains a runnable example of vox to cvox (and vice-versa) conversion written in Java.
 This example currently only supports 1 to 1 conversion, meaning cvox models must have 255 or less colours to be convertable.
-I may add colour quantisation to the example in the future.
+I may add colour quantisation to this convertor in the future.
+
+The convertor can be run by importing this repository into an IDE and passing it an input and output file path (ending in .vox/.cvox) as parameters.
 
 ## Compression
 ### Coordinates
