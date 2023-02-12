@@ -80,3 +80,10 @@ Multiple models can be stored in a file and these models can have an offset, mea
 A .vox file consists of a file format information part, chunks and subchunks.
 ### .cvox
 A .cvox file consists of chunks only.
+
+## License
+Anyone is free to use the .cvox format in any way without warranties (unlicensed).
+The conversion example code is licensed under GPL v3.
+
+## Contact
+For questions/help/feedback please post an Issue on this repository.
