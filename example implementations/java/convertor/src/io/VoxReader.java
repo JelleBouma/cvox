@@ -3,7 +3,7 @@ package io;
 import rifflike.MagicaChunk;
 import rifflike.RiffReader;
 import utils.EL;
-import utils.NumberUtilities;
+import static utils.NumberUtilities.bytesToInt;
 import voxel.Palette;
 import voxel.VoxModel;
 import voxel.XYZ;
@@ -30,7 +30,7 @@ public class VoxReader {
                 byte[] sizeBytes = sizeChunks.get(ss).content;
                 int[] size = new int[3];
                 for (int ii = 0; ii < 3; ii++)
-                    size[ii] = NumberUtilities.bytesToInt(Arrays.copyOfRange(sizeBytes, ii * 4, (ii + 1) * 4), true);
+                    size[ii] = bytesToInt(Arrays.copyOfRange(sizeBytes, ii * 4, (ii + 1) * 4), true);
                 VoxModel model = new VoxModel(size[0], size[1], size[2]);
                 model.fillXYZI(xyziChunks.get(ss).content);
                 model.setPalette(new Palette(rgba));
@@ -52,25 +52,25 @@ public class VoxReader {
         HashMap<Integer, XYZ> res = new HashMap<>();
         for (MagicaChunk nTRN : nTRNs) {
             byte[] bytes = nTRN.content;
-            int amountOfAttributes = NumberUtilities.bytesToInt(Arrays.copyOfRange(bytes, 4, 8), true);
+            int amountOfAttributes = bytesToInt(Arrays.copyOfRange(bytes, 4, 8), true);
             int pointer = 8;
             for (int aa = 0; aa < amountOfAttributes * 2; aa++) {
-                int stringSize = NumberUtilities.bytesToInt(Arrays.copyOfRange(bytes, pointer, pointer + 4), true);
+                int stringSize = bytesToInt(Arrays.copyOfRange(bytes, pointer, pointer + 4), true);
                 pointer += 4 + stringSize;
             }
-            int childID = NumberUtilities.bytesToInt(Arrays.copyOfRange(bytes, pointer, pointer + 4), true);
+            int childID = bytesToInt(Arrays.copyOfRange(bytes, pointer, pointer + 4), true);
             pointer += 12;
-            int frames = NumberUtilities.bytesToInt(Arrays.copyOfRange(bytes, pointer, pointer + 4), true);
+            int frames = bytesToInt(Arrays.copyOfRange(bytes, pointer, pointer + 4), true);
             pointer += 4;
             for (int ff = 0; ff < frames; ff += 2) {
-                int dictSize = NumberUtilities.bytesToInt(Arrays.copyOfRange(bytes, pointer, pointer + 4), true);
+                int dictSize = bytesToInt(Arrays.copyOfRange(bytes, pointer, pointer + 4), true);
                 pointer += 4;
                 for (int dd = 0; dd < dictSize; dd++) {
-                    int keySize = NumberUtilities.bytesToInt(Arrays.copyOfRange(bytes, pointer, pointer + 4), true);
+                    int keySize = bytesToInt(Arrays.copyOfRange(bytes, pointer, pointer + 4), true);
                     pointer += 4;
                     String key = new String(Arrays.copyOfRange(bytes, pointer, pointer + keySize));
                     pointer += keySize;
-                    int valueSize = NumberUtilities.bytesToInt(Arrays.copyOfRange(bytes, pointer, pointer + 4), true);
+                    int valueSize = bytesToInt(Arrays.copyOfRange(bytes, pointer, pointer + 4), true);
                     pointer += 4;
                     String value = new String(Arrays.copyOfRange(bytes, pointer, pointer + valueSize));
                     pointer += valueSize;
@@ -80,24 +80,24 @@ public class VoxReader {
                         System.out.println("found xyz " + xyz);
                         for (MagicaChunk nSHP : nSHPs) {
                             byte[] nshpBytes = nSHP.content;
-                            int nshpID = NumberUtilities.bytesToInt(Arrays.copyOfRange(nshpBytes, 0, 4), true);
+                            int nshpID = bytesToInt(Arrays.copyOfRange(nshpBytes, 0, 4), true);
                             if (nshpID == childID) {
-                                int nshpAttributes = NumberUtilities.bytesToInt(Arrays.copyOfRange(nshpBytes, 4, 8), true);
+                                int nshpAttributes = bytesToInt(Arrays.copyOfRange(nshpBytes, 4, 8), true);
                                 int nshpPointer = 8;
                                 for (int aa = 0; aa < nshpAttributes * 2; aa++) {
-                                    int stringSize = NumberUtilities.bytesToInt(Arrays.copyOfRange(nshpBytes, nshpPointer, nshpPointer + 4), true);
+                                    int stringSize = bytesToInt(Arrays.copyOfRange(nshpBytes, nshpPointer, nshpPointer + 4), true);
                                     nshpPointer += 4 + stringSize;
                                 }
-                                int models = NumberUtilities.bytesToInt(Arrays.copyOfRange(nshpBytes, nshpPointer, nshpPointer + 4), true);
+                                int models = bytesToInt(Arrays.copyOfRange(nshpBytes, nshpPointer, nshpPointer + 4), true);
                                 nshpPointer += 4;
                                 for (int mm = 0; mm < models; mm++) {
-                                    int modelID = NumberUtilities.bytesToInt(Arrays.copyOfRange(nshpBytes, nshpPointer, nshpPointer + 4), true);
+                                    int modelID = bytesToInt(Arrays.copyOfRange(nshpBytes, nshpPointer, nshpPointer + 4), true);
                                     nshpPointer += 4;
                                     res.put(modelID, xyz);
-                                    int modelAttributes = NumberUtilities.bytesToInt(Arrays.copyOfRange(nshpBytes, nshpPointer, nshpPointer + 4), true);
+                                    int modelAttributes = bytesToInt(Arrays.copyOfRange(nshpBytes, nshpPointer, nshpPointer + 4), true);
                                     nshpPointer += 4;
                                     for (int aa = 0; aa < modelAttributes * 2; aa++) {
-                                        int stringSize = NumberUtilities.bytesToInt(Arrays.copyOfRange(nshpBytes, nshpPointer, nshpPointer + 4), true);
+                                        int stringSize = bytesToInt(Arrays.copyOfRange(nshpBytes, nshpPointer, nshpPointer + 4), true);
                                         nshpPointer += 4 + stringSize;
                                     }
                                 }

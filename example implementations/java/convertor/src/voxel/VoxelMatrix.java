@@ -31,6 +31,10 @@ public class VoxelMatrix {
         });
     }
 
+    public int get(XYZ xyz) {
+        return content[xyz.x][xyz.y][xyz.z];
+    }
+
     public VoxelMatrix clone() {
         int[][][] copy = new int[size.x][size.y][size.z];
         for (int xx = 0; xx < size.x; xx++)

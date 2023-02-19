@@ -4,6 +4,10 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
 
+/**
+ * Extended functionality for ArrayList.
+ * @param <E> The type of the elements.
+ */
 public class EL <E> extends ArrayList<E> {
 
     public EL(E... varargs) {

@@ -18,7 +18,6 @@ public class CvoxReader {
     public static CvoxMultimodel read(File file) {
         CvoxMultimodel res = new CvoxMultimodel();
         try (DataInputStream dis = new DataInputStream(new FileInputStream(file))) {
-            System.out.println("reading CVOX chunk");
             Chunk chunk = RiffReader.readNextChunk(dis);
             if (chunk == null || !chunk.id.equals("CVOX"))
                 throw new IllegalArgumentException("Not a valid cvox file, it should start with the CVOX chunk");

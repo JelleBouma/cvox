@@ -1,7 +1,7 @@
 package rifflike;
 
 import utils.EL;
-import utils.NumberUtilities;
+import static utils.NumberUtilities.bytesToInt;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -11,8 +11,8 @@ public class RiffReader {
 
     public static MagicaChunk readNextMagicaChunk(DataInputStream dis) throws IOException {
         String chunkID = new String(dis.readNBytes(4), StandardCharsets.US_ASCII);
-        int size = NumberUtilities.bytesToInt(dis.readNBytes(4), true);
-        int subChunkSize = NumberUtilities.bytesToInt(dis.readNBytes(4), true);
+        int size = bytesToInt(dis.readNBytes(4), true);
+        int subChunkSize = bytesToInt(dis.readNBytes(4), true);
         byte[] content = dis.readNBytes(size);
         EL<MagicaChunk> subchunks = new EL<>();
         int chunkCounter = 0;
@@ -32,7 +32,7 @@ public class RiffReader {
         String chunkID = new String(dis.readNBytes(4), StandardCharsets.US_ASCII);
         if (chunkID.isEmpty())
             return null;
-        int size = NumberUtilities.bytesToInt(dis.readNBytes(4), true);
+        int size = bytesToInt(dis.readNBytes(4), true);
         byte[] content = dis.readNBytes(size);
         return new Chunk(chunkID, content);
     }

@@ -1,6 +1,6 @@
 package voxel;
 
-import utils.NumberUtilities;
+import static utils.NumberUtilities.bytesToInt;
 
 import java.util.Arrays;
 
@@ -15,7 +15,7 @@ public class Palette {
 
     public Palette(byte[] paletteBytes) {
         for (int cc = 0; cc < SIZE; cc++)
-            palette[cc] = new Colour(Colour.rgbaToArgb(NumberUtilities.bytesToInt(Arrays.copyOfRange(paletteBytes, cc * 4, cc * 4 + 4))), true);
+            palette[cc] = new Colour(Colour.rgbaToArgb(bytesToInt(Arrays.copyOfRange(paletteBytes, cc * 4, cc * 4 + 4))), true);
     }
 
     public Palette(Colour[] palette) {

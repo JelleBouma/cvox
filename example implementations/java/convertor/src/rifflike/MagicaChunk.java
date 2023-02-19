@@ -1,7 +1,7 @@
 package rifflike;
 
 import utils.EL;
-import utils.NumberUtilities;
+import static utils.NumberUtilities.sum;
 
 public class MagicaChunk {
     public String id;
@@ -20,7 +20,7 @@ public class MagicaChunk {
         this.size = bytes.length;
         this.content = bytes;
         this.subChunks = subChunks;
-        subchunkSize = NumberUtilities.sum(subChunks.convertAll(c -> c.size + 12));
+        subchunkSize = sum(subChunks.convertAll(c -> c.size + 12));
     }
 
     public EL<MagicaChunk> getSubChunks(String id) {

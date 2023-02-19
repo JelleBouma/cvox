@@ -1,7 +1,7 @@
 package voxel;
 
 import utils.EL;
-import utils.NumberUtilities;
+import static utils.NumberUtilities.encroach;
 
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -34,6 +34,35 @@ public class XYZ {
         this.y = y;
         this.z = z;
     }
+
+    /**
+     * Get x, y, or z respectively by their index.
+     * Overflow is supported and will evaluate to modulo 3.
+     * For example: index 3 evaluates to 0 and as such will return x.
+     */
+    public int get(int index) {
+        int moddedIndex = index % 3;
+        return switch (moddedIndex) {
+            case 0 -> x;
+            case 1 -> y;
+            default -> z;
+        };
+    }
+
+    /**
+     * Set a value to x, y, or z respectively by their index.
+     * Overflow is supported and will evaluate to modulo 3.
+     * For example: index 3 evaluates to 0 and as such will set x.
+     */
+    public void set(int index, int value) {
+        int moddedIndex = index % 3;
+        switch (moddedIndex) {
+            case 0 -> x = value;
+            case 1 -> y = value;
+            default -> z = value;
+        }
+    }
+
     /**
      * Both bounds are inclusive.
      */
@@ -117,18 +146,18 @@ public class XYZ {
     }
     // from inclusive, to exclusive
     public void fromTo(XYZ to, Consumer<XYZ> consumer) {
-        for (int xx = x; xx != to.x; xx = NumberUtilities.encroach(xx, to.x))
-            for (int yy = y; yy != to.y; yy = NumberUtilities.encroach(yy, to.y))
-                for (int zz = z; zz != to.z; zz = NumberUtilities.encroach(zz, to.z))
+        for (int xx = x; xx != to.x; xx = encroach(xx, to.x))
+            for (int yy = y; yy != to.y; yy = encroach(yy, to.y))
+                for (int zz = z; zz != to.z; zz = encroach(zz, to.z))
                     consumer.accept(new XYZ(xx, yy, zz));
     }
 
     // from inclusive, to exclusive
     public EL<XYZ> fromToList(XYZ to, XYZ step) {
         EL<XYZ> res = new EL<>();
-        for (int xx = x; xx != to.x; xx = NumberUtilities.encroach(xx, to.x, step.x))
-            for (int yy = y; yy != to.y; yy = NumberUtilities.encroach(yy, to.y, step.y))
-                for (int zz = z; zz != to.z; zz = NumberUtilities.encroach(zz, to.z, step.z)) {
+        for (int xx = x; xx != to.x; xx = encroach(xx, to.x, step.x))
+            for (int yy = y; yy != to.y; yy = encroach(yy, to.y, step.y))
+                for (int zz = z; zz != to.z; zz = encroach(zz, to.z, step.z)) {
                     res.add(new XYZ(xx, yy, zz));
                 }
         return res;

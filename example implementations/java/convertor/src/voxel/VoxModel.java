@@ -3,7 +3,7 @@ package voxel;
 import io.CVoxModel;
 import io.CvoxMultimodel;
 import utils.EL;
-import utils.NumberUtilities;
+import static utils.NumberUtilities.intToBool;
 
 import java.util.HashMap;
 import java.util.function.Function;
@@ -96,7 +96,7 @@ public class VoxModel extends EL<Voxel> {
         VoxModel[][][] res = new VoxModel[slices.x][slices.y][slices.z];
         new XYZ().fromTo(slices, (xyz) -> {
             XYZ isEdge = xyz.combine(slices, (i, s) -> i == s - 1 ? 1 : 0);
-            XYZ innerBounds = isEdge.combine(finalBounds, (i, b) -> NumberUtilities.intToBool(i) ? 0 : b);
+            XYZ innerBounds = isEdge.combine(finalBounds, (i, b) -> intToBool(i) ? 0 : b);
             XYZ edgeBounds = size.combine(finalBounds, (s, b) -> s % b == 0 ? b : s % b);
             XYZ compactBounds = isEdge.combine(edgeBounds, (i, b) -> i == 0 ? 0 : b);
             XYZ calculatedBounds = compactBounds.add(innerBounds);
