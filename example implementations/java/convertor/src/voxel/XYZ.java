@@ -114,6 +114,21 @@ public class XYZ {
         return combine(divideBy, Math::divideExact);
     }
 
+    /**
+     * modulo
+     */
+    public XYZ mod(int modBy) {
+        return transform(a -> a % modBy);
+    }
+
+    /**
+     * divide by, rounded down
+     */
+    public XYZ mod(XYZ modBy) {
+        return combine(modBy, (a, b) -> a % b);
+    }
+
+
     public XYZ difference(XYZ toDiff) {
         return subtract(toDiff).abs();
     }
@@ -152,29 +167,9 @@ public class XYZ {
                     consumer.accept(new XYZ(xx, yy, zz));
     }
 
-    // from inclusive, to exclusive
-    public EL<XYZ> fromToList(XYZ to, XYZ step) {
-        EL<XYZ> res = new EL<>();
-        for (int xx = x; xx != to.x; xx = encroach(xx, to.x, step.x))
-            for (int yy = y; yy != to.y; yy = encroach(yy, to.y, step.y))
-                for (int zz = z; zz != to.z; zz = encroach(zz, to.z, step.z)) {
-                    res.add(new XYZ(xx, yy, zz));
-                }
-        return res;
-    }
-
     @Override
     public boolean equals(Object obj) {
         return obj.getClass() == XYZ.class && ((XYZ) obj).x == x && ((XYZ) obj).y == y && ((XYZ) obj).z == z;
-    }
-
-    @Override
-    public String toString() {
-        return "voxel.XYZ{" +
-                "x=" + x +
-                ", y=" + y +
-                ", z=" + z +
-                '}';
     }
 
     @Override

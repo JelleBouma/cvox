@@ -3,19 +3,19 @@ package io;
 import utils.EL;
 import voxel.*;
 
-public class CVoxModel extends EL<Cube> {
+public class CvoxModel extends EL<Cube> {
     public XYZ size;
     public EL<Colour> unusedColours = new EL<>();
 
-    public CVoxModel(XYZ size) {
+    public CvoxModel(XYZ size) {
         this.size = size;
     }
 
-    public CVoxModel(VoxModel voxels) {
+    public CvoxModel(VoxModel voxels) {
         this(voxels.toMatrix());
     }
 
-    public CVoxModel(VoxelMatrix matrix) {
+    public CvoxModel(VoxMatrix matrix) {
         size = matrix.size;
         Colour[] palette = matrix.palette.palette;
         for (int xx = 0; xx < size.x; xx++)
@@ -27,7 +27,7 @@ public class CVoxModel extends EL<Cube> {
                         XYZ high = new XYZ(xx, yy, zz); // highest point of the cube
                         boolean[] cubeExpanded = {true, true, true};
                         while (cubeExpanded[0] || cubeExpanded[1] || cubeExpanded[2]) // while cube can be expanded
-                            for (int ee = 0; ee < 2; ee++) {
+                            for (int ee = 0; ee < 3; ee++) {
                                 checkIfSideCanBeExpanded(matrix, cubeExpanded, ee, low, high, i);
                                 expandSideIfTrue(cubeExpanded[ee], ee, high);
                             }
@@ -40,7 +40,8 @@ public class CVoxModel extends EL<Cube> {
                 }
     }
 
-    private void checkIfSideCanBeExpanded(VoxelMatrix matrix, boolean[] cubeExpanded, int side, XYZ low, XYZ high, int i) {
+    private void checkIfSideCanBeExpanded(VoxMatrix matrix, boolean[] cubeExpanded, int side, XYZ low, XYZ high, int i) {
+        cubeExpanded[side] &= high.get(side) < size.get(side) - 1;
         if (cubeExpanded[side]) // if x side can be expanded
             for (int ss1 = low.get(side + 1); ss1 <= high.get(side + 1); ss1++) // try to find a voxel that stops x side being expanded
                 for (int ss2 = low.get(side + 2); ss2 <= high.get(side + 2); ss2++)

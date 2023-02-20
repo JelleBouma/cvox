@@ -19,7 +19,7 @@ public class CvoxWriter {
         try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(output))) {
             EL<Chunk> chunks = new EL<>(new Chunk("CVOX", intsToBytes(true,1)));
             for (int mm = 0; mm < cvoxMultimodel.models.size(); mm++) {
-                CVoxModel model = cvoxMultimodel.models.get(mm);
+                CvoxModel model = cvoxMultimodel.models.get(mm);
                 byte[] size = new byte[15];
                 size[0] = (byte) model.size.x;
                 size[1] = (byte) model.size.y;
@@ -54,7 +54,7 @@ public class CvoxWriter {
                     chunks.add(new Chunk("CMAP", cmap));
                     chunks.add(new Chunk("CUBE", cubeBytes));
                 }
-                if (voxels.size() > 0) {
+                if (voxels.size() > 0) { // FIXME: refactor, duplicate code from cube writing
                     EL<EL<Cube>> sortedVoxels = voxels.distribute((c1, c2) -> c1.colour.equals(c2.colour));
                     byte[] xyzBytes = new byte[voxels.size() * 3];
                     byte[] vmap = new byte[sortedVoxels.size() * 7];

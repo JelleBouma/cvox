@@ -17,7 +17,6 @@ import java.util.Arrays;
 public class VoxWriter {
 
     public static void write(VoxModel voxelModel, File output) {
-        long startTime = System.currentTimeMillis();
         try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(output))) {
             dos.writeBytes("VOX ");
             dos.write(intsToBytes(true, 150));
@@ -67,7 +66,6 @@ public class VoxWriter {
             }
             MagicaChunk main = new MagicaChunk("MAIN", new byte[0], chunks);
             RiffWriter.writeNextMagicaChunk(dos, main);
-            System.out.println("writing voxelmodel " + output.getName() + " took " + (System.currentTimeMillis() - startTime));
         } catch (Exception e) {
             e.printStackTrace();
         }

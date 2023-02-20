@@ -18,18 +18,6 @@ public class Palette {
             palette[cc] = new Colour(Colour.rgbaToArgb(bytesToInt(Arrays.copyOfRange(paletteBytes, cc * 4, cc * 4 + 4))), true);
     }
 
-    public Palette(Colour[] palette) {
-        if (palette.length == SIZE)
-            this.palette = palette;
-        else {
-            for (int pp = 0; pp < palette.length && pp < SIZE; pp++)
-                this.palette[pp] = palette[pp];
-            for (int pp = palette.length; pp < SIZE; pp++) {
-                this.palette[pp] = Colour.BLACK;
-            }
-        }
-    }
-
     public Colour getColour(int i) {
         return palette[i - 1];
     }
@@ -39,9 +27,4 @@ public class Palette {
     public Colour[] getArray() {
         return palette;
     }
-
-    public Palette clone() {
-        return new Palette(palette);
-    }
-
 }

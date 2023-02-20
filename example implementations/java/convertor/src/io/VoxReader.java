@@ -18,7 +18,6 @@ import java.util.HashMap;
 public class VoxReader {
 
     public static VoxModel read(File file) {
-        long startTime = System.currentTimeMillis();
         try (DataInputStream dis = new DataInputStream(new FileInputStream(file))) {
             dis.skipBytes(8);
             MagicaChunk main = RiffReader.readNextMagicaChunk(dis);
@@ -37,8 +36,6 @@ public class VoxReader {
                 models.add(model);
             }
             HashMap<Integer, XYZ> translations = readTranslations(main.getSubChunks("nTRN"), main.getSubChunks("nSHP"));
-            System.out.println("reading voxelmodel " + file.getName() + " took " + (System.currentTimeMillis() - startTime));
-            System.out.println("models: " + models.size() + ", translations: " + translations.size());
             return VoxModel.simpleMerge(models, translations, models.get(0).getPalette());
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -77,7 +74,6 @@ public class VoxReader {
                     if (key.equals("_t")) {
                         String[] xyzParts = value.split(" ");
                         XYZ xyz = new XYZ(Integer.parseInt(xyzParts[0]), Integer.parseInt(xyzParts[1]), Integer.parseInt(xyzParts[2]));
-                        System.out.println("found xyz " + xyz);
                         for (MagicaChunk nSHP : nSHPs) {
                             byte[] nshpBytes = nSHP.content;
                             int nshpID = bytesToInt(Arrays.copyOfRange(nshpBytes, 0, 4), true);

@@ -21,7 +21,7 @@ public class CvoxReader {
             Chunk chunk = RiffReader.readNextChunk(dis);
             if (chunk == null || !chunk.id.equals("CVOX"))
                 throw new IllegalArgumentException("Not a valid cvox file, it should start with the CVOX chunk");
-            CVoxModel model = null;
+            CvoxModel model = null;
             ColourMap cmap = new ColourMap();
             ColourMap vmap = new ColourMap();
             EL<Cube> cubes = new EL<>();
@@ -34,7 +34,7 @@ public class CvoxReader {
                             model.fill(cmap, cubes);
                             model.fill(vmap, voxels);
                         }
-                        model = new CVoxModel(readDimensionsFromSIZE(chunk));
+                        model = new CvoxModel(readDimensionsFromSIZE(chunk));
                         res.add(model, readTranslationFromSIZE(chunk));
                     }
                     case "CMAP" -> cmap = readMap(chunk);

@@ -1,6 +1,6 @@
 package voxel;
 
-import io.CVoxModel;
+import io.CvoxModel;
 import io.CvoxMultimodel;
 import utils.EL;
 import static utils.NumberUtilities.intToBool;
@@ -38,7 +38,7 @@ public class VoxModel extends EL<Voxel> {
     public VoxModel(CvoxMultimodel cvoxMultimodel) {
         this(cvoxMultimodel.size);
         for (int mm = 0; mm < cvoxMultimodel.models.size(); mm++) {
-            CVoxModel cvoxModel = cvoxMultimodel.models.get(mm);
+            CvoxModel cvoxModel = cvoxMultimodel.models.get(mm);
             XYZ translation = cvoxMultimodel.translations.get(mm);
             for (Cube cube : cvoxModel)
                 for (int xx = cube.low.x; xx <= cube.high.x; xx++)
@@ -91,7 +91,6 @@ public class VoxModel extends EL<Voxel> {
      */
     public VoxModel[][][] simpleSplit(XYZ bounds) {
         XYZ finalBounds = bounds.min(size);
-        System.out.println(finalBounds);
         XYZ slices = finalBounds.combine(size, (b, m) -> (int) Math.ceil((double)m / b));
         VoxModel[][][] res = new VoxModel[slices.x][slices.y][slices.z];
         new XYZ().fromTo(slices, (xyz) -> {
@@ -103,8 +102,8 @@ public class VoxModel extends EL<Voxel> {
             res[xyz.x][xyz.y][xyz.z] = new VoxModel(calculatedBounds, palette);
         });
         for (Voxel voxel : this) {
-            XYZ modelXYZ = voxel.combine(finalBounds, (v, b) -> v / b);
-            XYZ locationXYZ = voxel.combine(finalBounds, (v, b) -> v % b);
+            XYZ modelXYZ = voxel.div(finalBounds);
+            XYZ locationXYZ = voxel.mod(finalBounds);
             res[modelXYZ.x][modelXYZ.y][modelXYZ.z].add(new Voxel(locationXYZ, voxel.i));
         }
         return res;
@@ -163,34 +162,11 @@ public class VoxModel extends EL<Voxel> {
         return -1; // all colour indices in use
     }
 
-    @Override
-    public VoxModel filter(Predicate<Voxel> predicate) {
-        return (VoxModel) super.filter(predicate, this::copyCanvas);
-    }
-
-    @Override
-    public VoxModel radixLSDSort(Function<Voxel, Integer> toIntFunction, int base, int limit) {
-        return (VoxModel) radixLSDSort(toIntFunction, base, limit, this::copyCanvas);
-    }
-    public VoxModel copyCanvas() {
-        return new VoxModel(size.clone(), palette.clone());
-    }
-
-    public VoxelMatrix toMatrix() {
+    public VoxMatrix toMatrix() {
         int[][][] res = new int[size.x][size.y][size.z];
         for (Voxel voxel : this)
             if (voxel.withinBounds(XYZ.ZERO, size.subtract(XYZ.ONE)))
                 res[voxel.x][voxel.y][voxel.z] = voxel.i;
-            else
-                System.out.println(voxel + " not within bounds wtf");
-        return new VoxelMatrix(res, palette);
-    }
-
-
-    @Override
-    public VoxModel clone() {
-        VoxModel copy = copyCanvas();
-        copy.addAll(convertAll(Voxel::clone));
-        return copy;
+        return new VoxMatrix(res, palette);
     }
 }
