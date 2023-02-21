@@ -39,7 +39,7 @@ public class CvoxWriter {
                         EL<Cube> sameColourCubes = sortedCubes.get(cc);
                         int rgba = Colour.argbToRgba(sameColourCubes.first().colour.getRGB());
                         byte[] amountOfCubes = intsToBytes(3, true, sameColourCubes.size());
-                        System.arraycopy(intsToBytes(true, rgba), 0, cmap, cc * 7, 4);
+                        System.arraycopy(intsToBytes(rgba), 0, cmap, cc * 7, 4);
                         System.arraycopy(amountOfCubes, 0, cmap, cc * 7 + 4, 3);
                         for (Cube cube : sameColourCubes) {
                             cubeBytes[cubeCounter * 6] = (byte) cube.low.x;
@@ -63,7 +63,7 @@ public class CvoxWriter {
                         EL<Cube> sameColourVoxels = sortedVoxels.get(vv);
                         int rgba = Colour.argbToRgba(sameColourVoxels.first().colour.getRGB());
                         byte[] amountOfVoxels = intsToBytes(3, true, sameColourVoxels.size());
-                        System.arraycopy(intsToBytes(true, rgba), 0, vmap, vv * 7, 4);
+                        System.arraycopy(intsToBytes(rgba), 0, vmap, vv * 7, 4);
                         System.arraycopy(amountOfVoxels, 0, vmap, vv * 7 + 4, 3);
                         for (Cube voxel : sameColourVoxels) {
                             XYZ xyz = voxel.low;
@@ -74,7 +74,7 @@ public class CvoxWriter {
                         }
                     }
                     chunks.add(new Chunk("VMAP", vmap));
-                    chunks.add(new Chunk("voxel.XYZ ", xyzBytes));
+                    chunks.add(new Chunk("XYZ ", xyzBytes));
                 }
             }
             for (Chunk chunk : chunks)

@@ -78,7 +78,7 @@ public class CvoxReader {
         while (bb < chunk.content.length) {
             System.arraycopy(chunk.content, bb, colour, 0, 4);
             System.arraycopy(chunk.content, bb + 4, count, 0, 3);
-            res.add(new Colour(Colour.rgbaToArgb(bytesToInt(colour, true))), bytesToInt(count, true, 3));
+            res.add(new Colour(Colour.rgbaToArgb(bytesToInt(colour))), bytesToInt(count, true, 3));
             bb += 7;
         }
         return res;

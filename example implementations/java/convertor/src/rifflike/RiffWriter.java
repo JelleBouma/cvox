@@ -11,9 +11,8 @@ public class RiffWriter {
         dos.write(intsToBytes(true, chunk.size));
         dos.write(intsToBytes(true, chunk.subchunkSize));
         dos.write(chunk.content);
-        for (MagicaChunk subchunk : chunk.subChunks) {
+        for (MagicaChunk subchunk : chunk.subChunks)
             writeNextMagicaChunk(dos, subchunk);
-        }
     }
 
     public static void writeNextChunk(DataOutputStream dos, Chunk chunk) throws IOException {
