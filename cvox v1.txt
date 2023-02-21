@@ -1,7 +1,9 @@
-Compressed Voxel .cvox File Format [2023-02-02]
+Compressed Voxel .cvox File Format [2023-02-21]
 
 1. File Structure : RIFF style
-All bytes and ints are unsigned.
+All byte types are unsigned.
+4 byte ints never use the most significant bit (this bit is always 0),
+as such, 4 byte ints can be read and written signed or unsigned without problems.
 Ints are stored in little endian byte order.
 -------------------------------------------------------------------------------
 // format version chunk
@@ -58,7 +60,7 @@ then the first 100 cubes in 'CUBE' are cyan.
 # Bytes  | Type       | Value
 -------------------------------------------------------------------------------
 7 x N    | byte       | (red, green, blue, alpha) : 1 byte for each component
-                      | 3 byte int for the amount of cubes with this colour
+                      | 3 byte uint for the amount of cubes with this colour
                       | amount can be 0 to store an unused palette colour.
 -------------------------------------------------------------------------------
 
@@ -77,7 +79,7 @@ then the first 3 voxels in 'XYZ ' are red.
 # Bytes  | Type       | Value
 -------------------------------------------------------------------------------
 7 x N    | byte       | (alpha, red, green, blue) : 1 byte for each component
-                      | 3 byte int for the amount of cubes with this colour
+                      | 3 byte uint for the amount of cubes with this colour
                       | amount can be 0 to store an unused palette colour.
 -------------------------------------------------------------------------------
 
