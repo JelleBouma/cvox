@@ -4,7 +4,7 @@
 .cvox is losslessly compressed to be much smaller, and allows any amount of colours to be used, compared to the .vox colour limit of 255.
 
 To illustrate the compression achieved by .cvox I have included the MagicaVoxel example .vox files, which have a combined size of 2,842,706 bytes.
-The equivalent .cvox files have a size of only 312,664 bytes.
+The equivalent .cvox files have a size of only 314,375 bytes.
 
 For a technical specification of the .cvox file format please see "cvox v1.txt".
 In this readme I will give a general outline of the ideas and improvements behind .cvox.
