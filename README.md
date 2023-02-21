@@ -10,12 +10,18 @@ For a technical specification of the .cvox file format please see "cvox v1.txt".
 In this readme I will give a general outline of the ideas and improvements behind .cvox.
 Some of the ideas of this file format were already thought of by Xless-Qu-dev in this github issue thread: https://github.com/ephtracy/voxel-model/issues/52
 
-## Conversion
-This repository contains a runnable example of vox to cvox (and vice-versa) conversion written in Java or C#.
-This example currently only supports 1 to 1 conversion, meaning cvox models must have 255 or less colours to be convertable.
+## Convertor Examples
+This repository contains the following examples of vox to cvox (and vice-versa) convertors:
+- Java console
+- C# console
+- C# WebAssembly (Blazor), you can try it here: https://jellebouma.github.io/cvox/
+
+The web app will convert any file you pass it (client side), while the console apps should be called with an input and an output file path respectively.
+In either case the input file names should use the .vox or .cvox extension.
+
+These examples currently only support 1 to 1 conversion, meaning cvox models must have 255 or less colours to be convertable.
 I may add colour quantisation to the convertors in the future.
 
-A convertor can be run by importing this repository into an IDE and passing it an input and output file path (ending in .vox/.cvox) as parameters.
 
 ## Compression
 ### Coordinates
