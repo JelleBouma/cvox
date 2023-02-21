@@ -11,17 +11,16 @@ namespace cvox_convertor.rifflike
 {
     public class RiffWriter
     {
-        public static void writeNextMagicaChunk(FileStream stream, MagicaChunk chunk)
+        public static void WriteNextMagicaChunk(Stream stream, MagicaChunk chunk)
         {
-            Console.WriteLine("wrting " + chunk.Id);
             stream.Write(Encoding.ASCII.GetBytes(chunk.Id));
             stream.Write(IntsToBytes(true, chunk.Size));
             stream.Write(IntsToBytes(true, chunk.SubchunkSize));
             stream.Write(chunk.Content);
             foreach (MagicaChunk subchunk in chunk.SubChunks)
-                writeNextMagicaChunk(stream, subchunk);
+                WriteNextMagicaChunk(stream, subchunk);
         }
-        public static void writeNextChunk(FileStream stream, Chunk chunk)
+        public static void WriteNextChunk(Stream stream, Chunk chunk)
         {
             stream.Write(Encoding.ASCII.GetBytes(chunk.Id));
             stream.Write(IntsToBytes(true, chunk.Size));

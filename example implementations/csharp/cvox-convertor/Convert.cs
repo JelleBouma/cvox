@@ -5,13 +5,15 @@ namespace cvox_convertor
 {
     internal class Convert
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             string inputType = args[0].Split('.').Last();
+            Stream input = File.OpenRead(args[0]);
+            Stream output = File.OpenWrite(args[1]);
             if (inputType == "vox")
-                CvoxWriter.Write(new CvoxMultimodel(VoxReader.read(args[0])), args[1]);
+                CvoxWriter.Write(new CvoxMultimodel(await VoxReader.ReadAsync(input)), output);
             else
-                VoxWriter.Write(new VoxModel(CvoxReader.Read(args[0])), args[1]);
+                VoxWriter.Write(new VoxModel(await CvoxReader.ReadAsync(input)), output);
         }
     }
 }

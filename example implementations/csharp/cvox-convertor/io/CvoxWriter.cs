@@ -16,9 +16,8 @@ namespace cvox_convertor.io
     public class CvoxWriter
     {
 
-        public static void Write(CvoxMultimodel cvoxMultimodel, string path)
+        public static void Write(CvoxMultimodel cvoxMultimodel, Stream stream)
         {
-            FileStream stream = File.OpenWrite(path);
             List<Chunk> chunks = new(){new Chunk("CVOX", IntsToBytes(true, 1))};
             for (int mm = 0; mm < cvoxMultimodel.Models.Count; mm++)
             {
@@ -44,7 +43,7 @@ namespace cvox_convertor.io
                         List<Cube> sameColourCubes = sortedCubes[cc].ToList();
                         int rgba = sameColourCubes.First().Colour.ToRgba();
                         byte[] amountOfCubes = IntsToBytes(3, true, sameColourCubes.Count);
-                        Array.Copy(IntsToBytes(true, rgba), 0, cmap, cc * 7, 4);
+                        Array.Copy(IntsToBytes(rgba), 0, cmap, cc * 7, 4);
                         Array.Copy(amountOfCubes, 0, cmap, cc * 7 + 4, 3);
                         foreach (Cube cube in sameColourCubes)
                         {
@@ -87,8 +86,7 @@ namespace cvox_convertor.io
                 }
             }
             foreach (Chunk chunk in chunks)
-                RiffWriter.writeNextChunk(stream, chunk);
-            stream.Close();
+                RiffWriter.WriteNextChunk(stream, chunk);
         }
     }
 }

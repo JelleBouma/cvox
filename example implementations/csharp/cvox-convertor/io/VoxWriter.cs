@@ -15,9 +15,8 @@ namespace cvox_convertor.io
     public class VoxWriter
     {
 
-        public static void Write(VoxModel voxelModel, string path)
+        public static void Write(VoxModel voxelModel, Stream stream)
         {
-            FileStream stream = File.OpenWrite(path);
             stream.Write(Encoding.ASCII.GetBytes("VOX "));
             stream.Write(IntsToBytes(true, 150));
             XYZ limit = new(256, 256, 256);
@@ -72,8 +71,7 @@ namespace cvox_convertor.io
                 chunks.Add(new("LAYR", layr));
             }
             MagicaChunk main = new("MAIN", Array.Empty<byte>(), chunks);
-            RiffWriter.writeNextMagicaChunk(stream, main);
-            stream.Close();
+            RiffWriter.WriteNextMagicaChunk(stream, main);
         }
 
         private static List<MagicaChunk> Translate(int modelID, XYZ translation, int nodeID)

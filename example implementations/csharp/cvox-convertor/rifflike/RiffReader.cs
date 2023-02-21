@@ -1,37 +1,31 @@
 ﻿using cvox_convertor.io;
-using cvox_convertor.rifflike;
-using cvox_convertor.utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using static cvox_convertor.utils.NumberUtilities;
+using System;
 
 namespace cvox_convertor.rifflike
 {
     public class RiffReader
     {
 
-        public static MagicaChunk? readNextMagicaChunk(FileStream stream)
+        public static async Task<MagicaChunk?> readNextMagicaChunkAsync(Stream stream)
         {
             byte[] meta = new byte[12];
-            int success = stream.Read(meta, 0, 12);
+            int success = await stream.ReadAsync(meta.AsMemory(0, 12));
             if (success == 12)
             {
                 string chunkID = Encoding.ASCII.GetString(meta[0..4]);
                 int size = BytesToInt(meta[4..8], true);
                 int subChunkSize = BytesToInt(meta[8..12], true);
                 byte[] content = new byte[size];
-                success = stream.Read(content, 0, size);
+                success = await stream.ReadAsync(content.AsMemory(0, size));
                 if (success == size)
                 {
                     List<MagicaChunk> subchunks = new();
                     int chunkCounter = 0;
                     while (chunkCounter < subChunkSize)
                     {
-                        MagicaChunk subchunk = readNextMagicaChunk(stream);
+                        MagicaChunk subchunk = await readNextMagicaChunkAsync(stream);
                         chunkCounter += subchunk.Size + 12;
                         subchunks.Add(subchunk);
                     }
@@ -46,16 +40,16 @@ namespace cvox_convertor.rifflike
          * Reads a rifflike.Chunk (RIFF) from a data stream.
          * @return The Chunk read, or null if the end of the stream has been reached.
          */
-        public static Chunk? ReadNextChunk(FileStream stream)
+        public async static Task<Chunk?> ReadNextChunkAsync(Stream stream)
         {
             byte[] meta = new byte[8];
-            int success = stream.Read(meta, 0, 8);
+            int success = await stream.ReadAsync(meta.AsMemory(0, 8));
             if (success == 8)
             {
                 string chunkID = Encoding.ASCII.GetString(meta[0..4]);
                 int size = BytesToInt(meta[4..8], true);
                 byte[] content = new byte[size];
-                success = stream.Read(content, 0, size);
+                success = await stream.ReadAsync(content.AsMemory(0, size));
                 if (success == size)
                     return new Chunk(chunkID, content);
                 throw new InvalidCvoxException(".cvox input has an invalid chunk structure");

@@ -17,11 +17,12 @@ namespace cvox_convertor.io
 
     public class VoxReader
     {
-        public static VoxModel read(string path)
+        public static async Task<VoxModel> ReadAsync(Stream stream)
         {
-            FileStream stream = File.OpenRead(path);
-            stream.Position += 8;
-            MagicaChunk main = RiffReader.readNextMagicaChunk(stream);
+            await stream.ReadAsync(new byte[8]);
+            MagicaChunk? main = await RiffReader.readNextMagicaChunkAsync(stream);
+            if (main == null)
+                throw new InvalidVoxException("could not find MAIN chunk");
             List<MagicaChunk> sizeChunks = main.GetSubChunks("SIZE");
             List<MagicaChunk> xyziChunks = main.GetSubChunks("XYZI");
             byte[] rgba = main.getSubChunk("RGBA").Content;
@@ -38,7 +39,6 @@ namespace cvox_convertor.io
                 models.Add(model);
             }
             Dictionary<int, XYZ> translations = readTranslations(main.GetSubChunks("nTRN"), main.GetSubChunks("nSHP"));
-            stream.Close();
             return VoxModel.simpleMerge(models, translations, models[0].getPalette());
         }
 
@@ -79,7 +79,7 @@ namespace cvox_convertor.io
                         if (key == "_t")
                         {
                             string[] xyzParts = value.Split(' ');
-                            XYZ xyz = new XYZ(int.Parse(xyzParts[0]), int.Parse(xyzParts[1]), int.Parse(xyzParts[2]));
+                            XYZ xyz = new(int.Parse(xyzParts[0]), int.Parse(xyzParts[1]), int.Parse(xyzParts[2]));
                             foreach (MagicaChunk nSHP in nSHPs)
                             {
                                 byte[] nshpBytes = nSHP.Content;

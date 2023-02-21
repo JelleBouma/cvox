@@ -1,14 +1,7 @@
 ﻿using cvox_convertor.rifflike;
 using cvox_convertor.voxel;
 using static cvox_convertor.utils.NumberUtilities;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace cvox_convertor.io
 {
@@ -19,19 +12,18 @@ namespace cvox_convertor.io
 
     public class CvoxReader
     {
-        public static CvoxMultimodel Read(string path)
+        public static async Task<CvoxMultimodel> ReadAsync(Stream stream)
         {
             CvoxMultimodel res = new CvoxMultimodel();
-            FileStream stream = File.OpenRead(path);
-            Chunk chunk = RiffReader.ReadNextChunk(stream);
+            Chunk? chunk = await RiffReader.ReadNextChunkAsync(stream);
             if (chunk == null || chunk.Id != "CVOX")
                 throw new InvalidCvoxException("Not a valid cvox file, it should start with the CVOX chunk");
-            CvoxModel model = null;
+            CvoxModel? model = null;
             ColourMap cmap = new ColourMap();
             ColourMap vmap = new ColourMap();
             List<Cube> cubes = new();
             List<Cube> voxels = new();
-            chunk = RiffReader.ReadNextChunk(stream);
+            chunk = await RiffReader.ReadNextChunkAsync(stream);
             while (chunk != null)
             {
                 switch (chunk.Id)
@@ -58,14 +50,13 @@ namespace cvox_convertor.io
                         cubes = ReadCubes(chunk);
                         break;
                 }
-                chunk = RiffReader.ReadNextChunk(stream);
+                chunk = await RiffReader.ReadNextChunkAsync(stream);
             }
             if (model != null)
             {
                 model.fill(cmap, cubes);
                 model.fill(vmap, voxels);
             }
-            stream.Close();
             return res;
         }
 
