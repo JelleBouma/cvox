@@ -11,11 +11,11 @@ In this readme I will give a general outline of the ideas and improvements behin
 Some of the ideas of this file format were already thought of by Xless-Qu-dev in this github issue thread: https://github.com/ephtracy/voxel-model/issues/52
 
 ## Conversion
-This repository contains a runnable example of vox to cvox (and vice-versa) conversion written in Java.
+This repository contains a runnable example of vox to cvox (and vice-versa) conversion written in Java or C#.
 This example currently only supports 1 to 1 conversion, meaning cvox models must have 255 or less colours to be convertable.
-I may add colour quantisation to this convertor in the future.
+I may add colour quantisation to the convertors in the future.
 
-The convertor can be run by importing this repository into an IDE and passing it an input and output file path (ending in .vox/.cvox) as parameters.
+A convertor can be run by importing this repository into an IDE and passing it an input and output file path (ending in .vox/.cvox) as parameters.
 
 ## Compression
 ### Coordinates
@@ -78,8 +78,9 @@ Multiple models can be stored in a file and these models can have an offset, mea
 ## Simplicity
 ### .vox
 A .vox file consists of a file format information part, chunks and subchunks.
+The system of subchunks limits the file size as every other chunk is a subchunk of MAIN and the combined subchunk size for MAIN has to be stored in an integer.
 ### .cvox
-A .cvox file consists of chunks only.
+A .cvox file consists of chunks only, a simpler and cleaner solution.
 
 ## License
 Anyone is free to use the .cvox format in any way without warranties (unlicensed).
