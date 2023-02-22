@@ -8,8 +8,8 @@
   "resources": {
     "assembly": {
       "cvox-convertor.dll": "sha256-r8xCpEfOPxsSNfgzX5SbHitqvIBkTVCOfyWgYUtCMUk=",
-      "cvox-convertor-blazor.dll": "sha256-LCw22mVHQEkTbeL20Bc3la41YEl2ESfg6P2dcuVVHDM=",
-      "Microsoft.AspNetCore.Components.dll": "sha256-U23Iu6NvE+GtlrOZcER9PX1ocPN\/hb4OS2bxZcYshLs=",
+      "cvox-convertor-blazor.dll": "sha256-HZV5lPEeRxr7fUf57If+GeAqeZL\/WUR9AYLIPhENLzc=",
+      "Microsoft.AspNetCore.Components.dll": "sha256-pR4Yk6+yKuxP6v+xy6j2U30uAXZDKUl6TfTM2tf0N10=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-7b1WOZl0u79HI1VbrVBpDwooGN\/WIsCa8P1xX7iMoR0=",
       "Microsoft.AspNetCore.Components.WebAssembly.dll": "sha256-0M91fXyGXaTN9Bx2GIWmYRLjkMW2t5EHTAZrFkTkEJA=",
       "Microsoft.Extensions.Configuration.Abstractions.dll": "sha256-X\/f4fDl2cuIRXeWHhK\/f2UqQbFioD+RU4a4CEh0zrrQ=",
