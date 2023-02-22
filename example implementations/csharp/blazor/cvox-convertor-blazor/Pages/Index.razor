@@ -1,0 +1,42 @@
+﻿@page "/"
+
+<p>Choose file to convert: </p>
+<InputFile OnChange="@Convert" accept=".vox,.cvox" />
+<div role="log">@((MarkupString)log)</div>
+
+@code {
+    private string log;
+    private async Task Convert(InputFileChangeEventArgs e)
+    {
+        log = "";
+        Stream input = e.File.OpenReadStream(int.MaxValue);
+        string inputFileName = e.File.Name;
+        log += Paragraph("Opened file: " + inputFileName);
+        Stream output = new MemoryStream();
+        string inputType = inputFileName.Split('.').Last();
+        string outputType = inputType == "vox" ? "cvox" : "vox";
+        log += Paragraph("Converting: " + inputType + " to " + outputType);
+        string outputFileName = inputFileName[..(inputFileName.Length - inputType.Length - 1)] + "." + outputType;
+        if (inputType == "vox")
+            CvoxWriter.Write(new CvoxMultimodel(await VoxReader.ReadAsync(input)), output);
+        else
+            VoxWriter.Write(new VoxModel(await CvoxReader.ReadAsync(input)), output);
+        log += Paragraph("Converted: " + inputFileName + " to " + outputFileName);
+        output.Position = 0;
+        log += Paragraph("Downloading: " + outputFileName);
+        await DownloadFileFromStream(outputFileName, output);
+        input.Dispose();
+        output.Dispose();
+    }
+
+    private async Task DownloadFileFromStream(string fileName, Stream output)
+    {
+        using DotNetStreamReference streamRef = new DotNetStreamReference(stream: output);
+        await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+    }
+
+    private string Paragraph(string content)
+    {
+        return "<p>" + content + "</p>";
+    }
+}

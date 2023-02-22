@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>W:\Code\cvox\example implementations\csharp\blazor\cvox-convertor-blazor\bin\Release\net7.0\browser-wasm\publish\</_PublishTargetUrl>
+    <History>True|2023-02-22T20:52:37.3304487Z;True|2023-02-21T18:10:14.1243857+01:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

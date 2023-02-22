@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "cvox-convertor": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\ergoforge\\voxelForge\\output\\teapot.cvox\r\nC:\\ergoforge\\voxelForge\\output\\teapot.vox",
+      "hotReloadEnabled": true
+    }
+  }
+}
