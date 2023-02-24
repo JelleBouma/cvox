@@ -19,7 +19,7 @@ public class CvoxReader {
         CvoxMultimodel res = new CvoxMultimodel();
         try (DataInputStream dis = new DataInputStream(new FileInputStream(file))) {
             Chunk chunk = RiffReader.readNextChunk(dis);
-            if (chunk == null || !chunk.id.equals("CVOX"))
+            if (chunk == null || !chunk.id.equals(CvoxID.CVOX))
                 throw new IllegalArgumentException("Not a valid cvox file, it should start with the CVOX chunk");
             CvoxModel model = null;
             ColourMap cmap = new ColourMap();
@@ -29,7 +29,7 @@ public class CvoxReader {
             chunk = RiffReader.readNextChunk(dis);
             while (chunk != null) {
                 switch (chunk.id) {
-                    case "SIZE" -> {
+                    case CvoxID.SIZE -> {
                         if (model != null) {
                             model.fill(cmap, cubes);
                             model.fill(vmap, voxels);
@@ -37,10 +37,10 @@ public class CvoxReader {
                         model = new CvoxModel(readDimensionsFromSIZE(chunk));
                         res.add(model, readTranslationFromSIZE(chunk));
                     }
-                    case "CMAP" -> cmap = readMap(chunk);
-                    case "VMAP" -> vmap = readMap(chunk);
-                    case "voxel.XYZ " -> voxels = readVoxels(chunk);
-                    case "CUBE" -> cubes = readCubes(chunk);
+                    case CvoxID.CMAP -> cmap = readMap(chunk);
+                    case CvoxID.VMAP -> vmap = readMap(chunk);
+                    case CvoxID.XYZ -> voxels = readVoxels(chunk);
+                    case CvoxID.CUBE -> cubes = readCubes(chunk);
                 }
                 chunk = RiffReader.readNextChunk(dis);
             }

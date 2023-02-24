@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace cvox_convertor.utils
+﻿namespace cvox_convertor.utils
 {
     public static class NumberUtilities
     {
-
-        public static int BytesToInt(byte[] bytes)
-        {
-            return BytesToInt(bytes, false);
-        }
         public static int BytesToInt(byte[] bytes, bool littleEndian)
         {
             int swap = BoolToInt(littleEndian) * 3;
@@ -95,21 +84,6 @@ namespace cvox_convertor.utils
         public static bool IntToBool(int integer)
         {
             return integer > 0;
-        }
-
-        public static int sum(int[] ints)
-        {
-            int res = 0;
-            foreach (int i in ints)
-                res += i;
-            return res;
-        }
-        public static int sum(List<int> ints)
-        {
-            int res = 0;
-            foreach (int i in ints)
-                res += i;
-            return res;
         }
 
     }

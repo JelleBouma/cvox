@@ -1,15 +1,8 @@
 ﻿using cvox_convertor.rifflike;
-using cvox_convertor.voxel;
-using static cvox_convertor.utils.NumberUtilities;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using cvox_convertor.utils;
+using cvox_convertor.voxel;
+using System.Drawing;
+using static cvox_convertor.utils.NumberUtilities;
 
 namespace cvox_convertor.io
 {
@@ -18,7 +11,7 @@ namespace cvox_convertor.io
 
         public static void Write(CvoxMultimodel cvoxMultimodel, Stream stream)
         {
-            List<Chunk> chunks = new(){new Chunk("CVOX", IntsToBytes(true, 1))};
+            List<Chunk> chunks = new() { new Chunk(CvoxID.CVOX, IntsToBytes(true, 1)) };
             for (int mm = 0; mm < cvoxMultimodel.Models.Count; mm++)
             {
                 CvoxModel model = cvoxMultimodel.Models[mm];
@@ -29,7 +22,7 @@ namespace cvox_convertor.io
                 XYZ translation = cvoxMultimodel.Translations[mm];
                 byte[] translationBytes = IntsToBytes(true, translation.X, translation.Y, translation.Z);
                 Array.Copy(translationBytes, 0, size, 3, 12);
-                chunks.Add(new Chunk("SIZE", size));
+                chunks.Add(new Chunk(CvoxID.SIZE, size));
                 List<Cube> voxels = model.AllMatches(c => c.Low == c.High);
                 List<Cube> cubes = model.AllMatches(c => c.Low != c.High);
                 if (cubes.Count > 0)
@@ -56,8 +49,8 @@ namespace cvox_convertor.io
                             cubeCounter++;
                         }
                     }
-                    chunks.Add(new Chunk("CMAP", cmap));
-                    chunks.Add(new Chunk("CUBE", cubeBytes));
+                    chunks.Add(new Chunk(CvoxID.CMAP, cmap));
+                    chunks.Add(new Chunk(CvoxID.CUBE, cubeBytes));
                 }
                 if (voxels.Count > 0) // FIXME: refactor, duplicate code from cube writing
                 {
@@ -81,8 +74,8 @@ namespace cvox_convertor.io
                             voxelCounter++;
                         }
                     }
-                    chunks.Add(new Chunk("VMAP", vmap));
-                    chunks.Add(new Chunk("XYZ ", xyzBytes));
+                    chunks.Add(new Chunk(CvoxID.VMAP, vmap));
+                    chunks.Add(new Chunk(CvoxID.XYZ, xyzBytes));
                 }
             }
             foreach (Chunk chunk in chunks)

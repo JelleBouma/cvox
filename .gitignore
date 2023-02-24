@@ -4,3 +4,5 @@ example implementations/csharp/blazor/cvox-convertor-blazor/obj/
 example implementations/csharp/blazor/cvox-convertor-blazor/bin/
 example implementations/csharp/blazor/cvox-convertor-blazor/.vs/
 example implementations/csharp/cvox-convertor/.vs/
+example implementations/csharp/cvox-convertor/.editorconfig
+example implementations/java/convertor/out/

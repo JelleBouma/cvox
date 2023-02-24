@@ -1,7 +1,7 @@
 ﻿using cvox_convertor.rifflike;
 using cvox_convertor.voxel;
-using static cvox_convertor.utils.NumberUtilities;
 using System.Drawing;
+using static cvox_convertor.utils.NumberUtilities;
 
 namespace cvox_convertor.io
 {
@@ -14,13 +14,13 @@ namespace cvox_convertor.io
     {
         public static async Task<CvoxMultimodel> ReadAsync(Stream stream)
         {
-            CvoxMultimodel res = new CvoxMultimodel();
+            CvoxMultimodel res = new();
             Chunk? chunk = await RiffReader.ReadNextChunkAsync(stream);
-            if (chunk == null || chunk.Id != "CVOX")
+            if (chunk == null || chunk.Id != CvoxID.CVOX)
                 throw new InvalidCvoxException("Not a valid cvox file, it should start with the CVOX chunk");
             CvoxModel? model = null;
-            ColourMap cmap = new ColourMap();
-            ColourMap vmap = new ColourMap();
+            ColourMap cmap = new();
+            ColourMap vmap = new();
             List<Cube> cubes = new();
             List<Cube> voxels = new();
             chunk = await RiffReader.ReadNextChunkAsync(stream);
@@ -28,25 +28,25 @@ namespace cvox_convertor.io
             {
                 switch (chunk.Id)
                 {
-                    case "SIZE": 
+                    case CvoxID.SIZE:
                         if (model != null)
                         {
-                            model.fill(cmap, cubes);
-                            model.fill(vmap, voxels);
+                            model.Fill(cmap, cubes);
+                            model.Fill(vmap, voxels);
                         }
                         model = new CvoxModel(ReadDimensionsFromSIZE(chunk));
-                        res.add(model, ReadTranslationFromSIZE(chunk));
+                        res.Add(model, ReadTranslationFromSIZE(chunk));
                         break;
-                    case "CMAP":
-                        cmap = readMap(chunk);
+                    case CvoxID.CMAP:
+                        cmap = ReadMap(chunk);
                         break;
-                    case "VMAP":
-                        vmap = readMap(chunk);
+                    case CvoxID.VMAP:
+                        vmap = ReadMap(chunk);
                         break;
-                    case "XYZ ":
+                    case CvoxID.XYZ:
                         voxels = ReadVoxels(chunk);
                         break;
-                    case "CUBE":
+                    case CvoxID.CUBE:
                         cubes = ReadCubes(chunk);
                         break;
                 }
@@ -54,8 +54,8 @@ namespace cvox_convertor.io
             }
             if (model != null)
             {
-                model.fill(cmap, cubes);
-                model.fill(vmap, voxels);
+                model.Fill(cmap, cubes);
+                model.Fill(vmap, voxels);
             }
             return res;
         }
@@ -75,10 +75,11 @@ namespace cvox_convertor.io
             return new XYZ(BytesToInt(translationX, true), BytesToInt(translationY, true), BytesToInt(translationZ, true));
         }
 
-        private static ColourMap readMap(Chunk chunk) {
+        private static ColourMap ReadMap(Chunk chunk)
+        {
             if (chunk.Size % 7 != 0)
                 throw new InvalidCvoxException(chunk.Id + " is invalid as it has a byte count not divisible by 7");
-            ColourMap res = new ColourMap();
+            ColourMap res = new();
             int bb = 0;
             byte[] colour = new byte[4];
             byte[] count = new byte[3];

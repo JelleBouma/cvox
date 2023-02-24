@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace cvox_convertor.utils
 {
@@ -44,7 +39,8 @@ namespace cvox_convertor.utils
             return false;
         }
 
-        public static int ToRgba(this Color colour) {
+        public static int ToRgba(this Color colour)
+        {
             uint argb = (uint)colour.ToArgb();
             return (int)((argb << 8) | (argb >> 24));
         }

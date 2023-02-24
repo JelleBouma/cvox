@@ -17,7 +17,7 @@ public class CvoxWriter {
 
     public static void write(CvoxMultimodel cvoxMultimodel, File output) {
         try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(output))) {
-            EL<Chunk> chunks = new EL<>(new Chunk("CVOX", intsToBytes(true,1)));
+            EL<Chunk> chunks = new EL<>(new Chunk(CvoxID.CVOX, intsToBytes(true,1)));
             for (int mm = 0; mm < cvoxMultimodel.models.size(); mm++) {
                 CvoxModel model = cvoxMultimodel.models.get(mm);
                 byte[] size = new byte[15];
@@ -27,7 +27,7 @@ public class CvoxWriter {
                 XYZ translation = cvoxMultimodel.translations.get(mm);
                 byte[] translationBytes = intsToBytes(true, translation.x, translation.y, translation.z);
                 System.arraycopy(translationBytes, 0, size, 3, 12);
-                chunks.add(new Chunk("SIZE", size));
+                chunks.add(new Chunk(CvoxID.SIZE, size));
                 EL<Cube> voxels = model.filter(c -> c.low.equals(c.high));
                 EL<Cube> cubes = model.filter(c -> !c.low.equals(c.high));
                 if (cubes.size() > 0) {
@@ -51,8 +51,8 @@ public class CvoxWriter {
                             cubeCounter++;
                         }
                     }
-                    chunks.add(new Chunk("CMAP", cmap));
-                    chunks.add(new Chunk("CUBE", cubeBytes));
+                    chunks.add(new Chunk(CvoxID.CMAP, cmap));
+                    chunks.add(new Chunk(CvoxID.CUBE, cubeBytes));
                 }
                 if (voxels.size() > 0) { // FIXME: refactor, duplicate code from cube writing
                     EL<EL<Cube>> sortedVoxels = voxels.distribute((c1, c2) -> c1.colour.equals(c2.colour));
@@ -73,8 +73,8 @@ public class CvoxWriter {
                             voxelCounter++;
                         }
                     }
-                    chunks.add(new Chunk("VMAP", vmap));
-                    chunks.add(new Chunk("XYZ ", xyzBytes));
+                    chunks.add(new Chunk(CvoxID.VMAP, vmap));
+                    chunks.add(new Chunk(CvoxID.XYZ, xyzBytes));
                 }
             }
             for (Chunk chunk : chunks)

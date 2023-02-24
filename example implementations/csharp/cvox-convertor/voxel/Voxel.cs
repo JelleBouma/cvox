@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace cvox_convertor.voxel
+﻿namespace cvox_convertor.voxel
 {
     public class Voxel : XYZ
     {

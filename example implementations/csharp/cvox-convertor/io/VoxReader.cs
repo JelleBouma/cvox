@@ -1,12 +1,7 @@
 ﻿using cvox_convertor.rifflike;
 using cvox_convertor.voxel;
-using static cvox_convertor.utils.NumberUtilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Text;
-using System.Threading.Tasks;
+using static cvox_convertor.utils.NumberUtilities;
 
 namespace cvox_convertor.io
 {
@@ -20,12 +15,12 @@ namespace cvox_convertor.io
         public static async Task<VoxModel> ReadAsync(Stream stream)
         {
             await stream.ReadAsync(new byte[8]);
-            MagicaChunk? main = await RiffReader.readNextMagicaChunkAsync(stream);
+            MagicaChunk? main = await RiffReader.ReadNextMagicaChunkAsync(stream);
             if (main == null)
                 throw new InvalidVoxException("could not find MAIN chunk");
-            List<MagicaChunk> sizeChunks = main.GetSubChunks("SIZE");
-            List<MagicaChunk> xyziChunks = main.GetSubChunks("XYZI");
-            byte[] rgba = main.getSubChunk("RGBA").Content;
+            List<MagicaChunk> sizeChunks = main.GetSubChunks(VoxID.SIZE);
+            List<MagicaChunk> xyziChunks = main.GetSubChunks(VoxID.XYZI);
+            byte[] rgba = main.GetSubChunk(VoxID.RGBA).Content;
             List<VoxModel> models = new();
             for (int ss = 0; ss < sizeChunks.Count; ss++)
             {
@@ -34,18 +29,18 @@ namespace cvox_convertor.io
                 for (int ii = 0; ii < 3; ii++)
                     size[ii] = BytesToInt(sizeBytes[(ii * 4)..((ii + 1) * 4)], true);
                 VoxModel model = new VoxModel(size[0], size[1], size[2]);
-                model.fillXYZI(xyziChunks[ss].Content);
-                model.setPalette(new Palette(rgba));
+                model.FillXYZI(xyziChunks[ss].Content);
+                model.SetPalette(new Palette(rgba));
                 models.Add(model);
             }
-            Dictionary<int, XYZ> translations = readTranslations(main.GetSubChunks("nTRN"), main.GetSubChunks("nSHP"));
-            return VoxModel.simpleMerge(models, translations, models[0].getPalette());
+            Dictionary<int, XYZ> translations = ReadTranslations(main.GetSubChunks(VoxID.nTRN), main.GetSubChunks(VoxID.nSHP));
+            return VoxModel.SimpleMerge(models, translations, models[0].GetPalette());
         }
 
         /**
          * Read the .vox model translations
          */
-        private static Dictionary<int, XYZ> readTranslations(List<MagicaChunk> nTRNs, List<MagicaChunk> nSHPs)
+        private static Dictionary<int, XYZ> ReadTranslations(List<MagicaChunk> nTRNs, List<MagicaChunk> nSHPs)
         {
             Dictionary<int, XYZ> res = new();
             foreach (MagicaChunk nTRN in nTRNs)

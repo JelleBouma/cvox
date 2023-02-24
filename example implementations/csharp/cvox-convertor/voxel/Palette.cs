@@ -1,10 +1,4 @@
-﻿using static cvox_convertor.utils.NumberUtilities;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace cvox_convertor.voxel
 {

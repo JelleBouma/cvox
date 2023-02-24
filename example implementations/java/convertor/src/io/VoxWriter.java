@@ -30,7 +30,7 @@ public class VoxWriter {
                 for (int yy = 0; yy < models[xx].length; yy++)
                     for (int zz = 0; zz < models[xx][yy].length; zz++) {
                         VoxModel model = models[xx][yy][zz];
-                        chunks.add(new MagicaChunk("SIZE", intsToBytes(true, model.size.x, model.size.y, model.size.z)));
+                        chunks.add(new MagicaChunk(VoxID.SIZE, intsToBytes(true, model.size.x, model.size.y, model.size.z)));
                         byte[] xyziBytes = Arrays.copyOf(intsToBytes(true, model.size()), 4 + model.size() * 4);
                         for (int vv = 0; vv < model.size(); vv++) {
                             Voxel voxel = model.get(vv);
@@ -39,7 +39,7 @@ public class VoxWriter {
                             xyziBytes[6 + vv * 4] = (byte) voxel.z;
                             xyziBytes[7 + vv * 4] = (byte) voxel.i;
                         }
-                        chunks.add(new MagicaChunk("XYZI", xyziBytes));
+                        chunks.add(new MagicaChunk(VoxID.XYZI, xyziBytes));
                         XYZ current = new XYZ(xx, yy, zz);
                         XYZ translationVector = current.mult(limit).add(model.size.div(2));
                         translations.addAll(translate(counter, translationVector, counter * 2 + 2));
@@ -47,9 +47,9 @@ public class VoxWriter {
                     }
             EL<Integer> rgbaPalette = new EL<>(voxelModel.getPalette().getArray()).convertAll(c -> Colour.argbToRgba(c.getRGB()));
             rgbaPalette.add(0);
-            chunks.add(new MagicaChunk("RGBA", intsToBytes(rgbaPalette)));
+            chunks.add(new MagicaChunk(VoxID.RGBA, intsToBytes(rgbaPalette)));
             if (multiModel) {
-                chunks.add(new MagicaChunk("nTRN", intsToBytes(true, 0, 0, 1, -1, -1, 1, 0)));
+                chunks.add(new MagicaChunk(VoxID.nTRN, intsToBytes(true, 0, 0, 1, -1, -1, 1, 0)));
                 byte[] nGRP = Arrays.copyOf(intsToBytes(true, 1, 0, counter), 12 + counter * 4);
                 for (int cc = 0; cc < counter; cc++) {
                     byte[] ccBytes = intsToBytes(true, cc * 2 + 2);
@@ -60,11 +60,11 @@ public class VoxWriter {
                 System.arraycopy(intsToBytes(true, 1), 0, layr, 17, 4);
                 System.arraycopy("0".getBytes(), 0, layr, 21, 1);
                 System.arraycopy(intsToBytes(true, -1), 0, layr, 22, 4);
-                chunks.add(new MagicaChunk("nGRP", nGRP));
+                chunks.add(new MagicaChunk(VoxID.nGRP, nGRP));
                 chunks.addAll(translations);
-                chunks.add(new MagicaChunk("LAYR", layr));
+                chunks.add(new MagicaChunk(VoxID.LAYR, layr));
             }
-            MagicaChunk main = new MagicaChunk("MAIN", new byte[0], chunks);
+            MagicaChunk main = new MagicaChunk(VoxID.MAIN, new byte[0], chunks);
             RiffWriter.writeNextMagicaChunk(dos, main);
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,6 +78,6 @@ public class VoxWriter {
         System.arraycopy(intsToBytes(true, t.length()), 0, nTRN, 34, 4);
         System.arraycopy(t.getBytes(), 0, nTRN, 38, t.length());
         byte[] nSHP = intsToBytes(true, nodeID + 1, 0, 1, modelID, 0);
-        return new EL<>(new MagicaChunk("nTRN", nTRN), new MagicaChunk("nSHP", nSHP));
+        return new EL<>(new MagicaChunk(VoxID.nTRN, nTRN), new MagicaChunk(VoxID.nSHP, nSHP));
     }
 }

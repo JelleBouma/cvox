@@ -21,9 +21,9 @@ public class VoxReader {
         try (DataInputStream dis = new DataInputStream(new FileInputStream(file))) {
             dis.skipBytes(8);
             MagicaChunk main = RiffReader.readNextMagicaChunk(dis);
-            EL<MagicaChunk> sizeChunks = main.getSubChunks("SIZE");
-            EL<MagicaChunk> xyziChunks = main.getSubChunks("XYZI");
-            byte[] rgba = main.getSubChunk("RGBA").content;
+            EL<MagicaChunk> sizeChunks = main.getSubChunks(VoxID.SIZE);
+            EL<MagicaChunk> xyziChunks = main.getSubChunks(VoxID.XYZI);
+            byte[] rgba = main.getSubChunk(VoxID.RGBA).content;
             EL<VoxModel> models = new EL<>();
             for (int ss = 0; ss < sizeChunks.size(); ss++) {
                 byte[] sizeBytes = sizeChunks.get(ss).content;
@@ -35,7 +35,7 @@ public class VoxReader {
                 model.setPalette(new Palette(rgba));
                 models.add(model);
             }
-            HashMap<Integer, XYZ> translations = readTranslations(main.getSubChunks("nTRN"), main.getSubChunks("nSHP"));
+            HashMap<Integer, XYZ> translations = readTranslations(main.getSubChunks(VoxID.nTRN), main.getSubChunks(VoxID.nSHP));
             return VoxModel.simpleMerge(models, translations, models.get(0).getPalette());
         } catch (IOException e) {
             throw new RuntimeException(e);

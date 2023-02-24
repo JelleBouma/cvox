@@ -1,9 +1,4 @@
 ﻿using cvox_convertor.voxel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace cvox_convertor.io
 {
@@ -19,14 +14,14 @@ namespace cvox_convertor.io
         public CvoxMultimodel(VoxModel voxModel)
         {
             Size = voxModel.Size;
-            VoxModel[, ,] voxModels = voxModel.simpleSplit(ModelLimit);
+            VoxModel[,,] voxModels = voxModel.SimpleSplit(ModelLimit);
             for (int xx = 0; xx < voxModels.GetLength(0); xx++)
                 for (int yy = 0; yy < voxModels.GetLength(1); yy++)
                     for (int zz = 0; zz < voxModels.GetLength(2); zz++)
-                        add(new CvoxModel(voxModels[xx, yy, zz]), new XYZ(xx, yy, zz) * ModelLimit);
+                        Add(new CvoxModel(voxModels[xx, yy, zz]), new XYZ(xx, yy, zz) * ModelLimit);
         }
 
-        public void add(CvoxModel model, XYZ translation)
+        public void Add(CvoxModel model, XYZ translation)
         {
             Models.Add(model);
             Translations.Add(translation);

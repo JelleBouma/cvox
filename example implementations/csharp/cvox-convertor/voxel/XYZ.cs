@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static cvox_convertor.utils.NumberUtilities;
+﻿using static cvox_convertor.utils.NumberUtilities;
 
 namespace cvox_convertor.voxel
 {
@@ -118,19 +113,19 @@ namespace cvox_convertor.voxel
         /**
          * Both bounds are inclusive.
          */
-        public bool withinBounds(XYZ bound0, XYZ bound1)
+        public bool WithinBounds(XYZ bound0, XYZ bound1)
         {
             XYZ lower = bound0.Min(bound1);
             XYZ upper = bound0.Max(bound1);
             return !HasLesserThan(lower) && !HasGreaterThan(upper);
         }
 
-        public int sum()
+        public int Sum()
         {
             return X + Y + Z;
         }
 
-        public XYZ abs()
+        public XYZ Abs()
         {
             return Transform(Math.Abs);
         }
@@ -147,7 +142,7 @@ namespace cvox_convertor.voxel
 
         public XYZ Difference(XYZ toDiff)
         {
-            return (this - toDiff).abs();
+            return (this - toDiff).Abs();
         }
 
         public XYZ GreaterThan(XYZ lesser)
@@ -167,12 +162,12 @@ namespace cvox_convertor.voxel
 
         public bool HasLesserThan(XYZ greater)
         {
-            return LesserThan(greater).sum() > 0;
+            return LesserThan(greater).Sum() > 0;
         }
 
         public bool HasGreaterThan(XYZ lesser)
         {
-            return GreaterThan(lesser).sum() > 0;
+            return GreaterThan(lesser).Sum() > 0;
         }
         public XYZ Combine(XYZ xyz, Func<int, int, int> combiner)
         {

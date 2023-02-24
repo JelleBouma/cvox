@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using cvox_convertor.utils;
+﻿using cvox_convertor.utils;
 
 namespace cvox_convertor.rifflike
 {
@@ -32,7 +27,7 @@ namespace cvox_convertor.rifflike
             return SubChunks.AllMatches(c => c.Id == id);
         }
 
-        public MagicaChunk getSubChunk(string id)
+        public MagicaChunk GetSubChunk(string id)
         {
             return SubChunks.FirstMatch(c => c.Id == id);
         }

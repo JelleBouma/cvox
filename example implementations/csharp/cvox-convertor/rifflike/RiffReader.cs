@@ -1,14 +1,13 @@
 ﻿using cvox_convertor.io;
 using System.Text;
 using static cvox_convertor.utils.NumberUtilities;
-using System;
 
 namespace cvox_convertor.rifflike
 {
     public class RiffReader
     {
 
-        public static async Task<MagicaChunk?> readNextMagicaChunkAsync(Stream stream)
+        public static async Task<MagicaChunk?> ReadNextMagicaChunkAsync(Stream stream)
         {
             byte[] meta = new byte[12];
             int success = await stream.ReadAsync(meta.AsMemory(0, 12));
@@ -25,7 +24,7 @@ namespace cvox_convertor.rifflike
                     int chunkCounter = 0;
                     while (chunkCounter < subChunkSize)
                     {
-                        MagicaChunk subchunk = await readNextMagicaChunkAsync(stream);
+                        MagicaChunk subchunk = await ReadNextMagicaChunkAsync(stream);
                         chunkCounter += subchunk.Size + 12;
                         subchunks.Add(subchunk);
                     }
