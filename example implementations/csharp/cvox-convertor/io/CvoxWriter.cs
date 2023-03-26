@@ -23,63 +23,51 @@ namespace cvox_convertor.io
                 byte[] translationBytes = IntsToBytes(true, translation.X, translation.Y, translation.Z);
                 Array.Copy(translationBytes, 0, size, 3, 12);
                 chunks.Add(new Chunk(CvoxID.SIZE, size));
-                List<Cube> voxels = model.AllMatches(c => c.Low == c.High);
-                List<Cube> cubes = model.AllMatches(c => c.Low != c.High);
-                if (cubes.Count > 0)
+                IEnumerable<IGrouping<Color, Cube>> sortedCubes = model.AllMatches(c => c.Low != c.High).GroupBy(c => c.Colour);
+                IEnumerable<IGrouping<Color, Cube>> sortedVoxels = model.AllMatches(c => c.Low == c.High).GroupBy(c => c.Colour);
+                if (sortedCubes.Any())
                 {
-                    List<IGrouping<Color, Cube>> sortedCubes = cubes.GroupBy(c => c.Colour).ToList();
-                    byte[] cubeBytes = new byte[cubes.Count * 6];
-                    byte[] cmap = new byte[sortedCubes.Count * 7];
-                    int cubeCounter = 0;
-                    for (int cc = 0; cc < sortedCubes.Count; cc++)
+                    ColourMap cmap = new();
+                    List<XYZ> cubeXYZs = new();
+                    foreach (IGrouping<Color, Cube> grouping in sortedCubes)
                     {
-                        List<Cube> sameColourCubes = sortedCubes[cc].ToList();
-                        int rgba = sameColourCubes.First().Colour.ToRgba();
-                        byte[] amountOfCubes = IntsToBytes(3, true, sameColourCubes.Count);
-                        Array.Copy(IntsToBytes(rgba), 0, cmap, cc * 7, 4);
-                        Array.Copy(amountOfCubes, 0, cmap, cc * 7 + 4, 3);
-                        foreach (Cube cube in sameColourCubes)
+                        cmap.Add(grouping.Key, grouping.Count());
+                        foreach (Cube cube in grouping)
                         {
-                            cubeBytes[cubeCounter * 6] = (byte)cube.Low.X;
-                            cubeBytes[cubeCounter * 6 + 1] = (byte)cube.Low.Y;
-                            cubeBytes[cubeCounter * 6 + 2] = (byte)cube.Low.Z;
-                            cubeBytes[cubeCounter * 6 + 3] = (byte)cube.High.X;
-                            cubeBytes[cubeCounter * 6 + 4] = (byte)cube.High.Y;
-                            cubeBytes[cubeCounter * 6 + 5] = (byte)cube.High.Z;
-                            cubeCounter++;
+                            cubeXYZs.Add(cube.Low);
+                            cubeXYZs.Add(cube.High);
                         }
                     }
-                    chunks.Add(new Chunk(CvoxID.CMAP, cmap));
-                    chunks.Add(new Chunk(CvoxID.CUBE, cubeBytes));
+                    chunks.Add(new Chunk(CvoxID.CMAP, cmap.ToBytes()));
+                    chunks.Add(new Chunk(CvoxID.CUBE, XYZsToBytes(cubeXYZs)));
                 }
-                if (voxels.Count > 0) // FIXME: refactor, duplicate code from cube writing
+                if (sortedVoxels.Any())
                 {
-                    List<IGrouping<Color, Cube>> sortedVoxels = voxels.GroupBy(c => c.Colour).ToList();
-                    byte[] xyzBytes = new byte[voxels.Count * 3];
-                    byte[] vmap = new byte[sortedVoxels.Count * 7];
-                    int voxelCounter = 0;
-                    for (int vv = 0; vv < sortedVoxels.Count; vv++)
+                    ColourMap vmap = new();
+                    List<XYZ> voxelXYZs = new();
+                    foreach (IGrouping<Color, Cube> grouping in sortedVoxels)
                     {
-                        List<Cube> sameColourVoxels = sortedVoxels[vv].ToList();
-                        int rgba = sameColourVoxels.First().Colour.ToRgba();
-                        byte[] amountOfVoxels = IntsToBytes(3, true, sameColourVoxels.Count);
-                        Array.Copy(IntsToBytes(rgba), 0, vmap, vv * 7, 4);
-                        Array.Copy(amountOfVoxels, 0, vmap, vv * 7 + 4, 3);
-                        foreach (Cube voxel in sameColourVoxels)
-                        {
-                            XYZ xyz = voxel.Low;
-                            xyzBytes[voxelCounter * 3] = (byte)xyz.X;
-                            xyzBytes[voxelCounter * 3 + 1] = (byte)xyz.Y;
-                            xyzBytes[voxelCounter * 3 + 2] = (byte)xyz.Z;
-                            voxelCounter++;
-                        }
+                        vmap.Add(grouping.Key, grouping.Count());
+                        voxelXYZs.AddRange(grouping.ToList().ConvertAll(c => c.Low));
                     }
-                    chunks.Add(new Chunk(CvoxID.VMAP, vmap));
-                    chunks.Add(new Chunk(CvoxID.XYZ, xyzBytes));
+                    chunks.Add(new Chunk(CvoxID.VMAP, vmap.ToBytes()));
+                    chunks.Add(new Chunk(CvoxID.XYZ, XYZsToBytes(voxelXYZs)));
                 }
             }
             foreach (Chunk chunk in chunks)
                 RiffWriter.WriteNextChunk(stream, chunk);
+        }
+
+        private static byte[] XYZsToBytes(List<XYZ> xyzs)
+        {
+            byte[] res = new byte[xyzs.Count * 3];
+            for (int ii = 0; ii < xyzs.Count; ii++)
+            {
+                res[ii * 3] = (byte)xyzs[ii].X;
+                res[ii * 3 + 1] = (byte)xyzs[ii].Y;
+                res[ii * 3 + 2] = (byte)xyzs[ii].Z;
+            }
+            return res;
         }
     }
 }

@@ -2,6 +2,7 @@ package io;
 
 import utils.EL;
 import voxel.Colour;
+import static utils.NumberUtilities.*;
 
 import java.util.HashMap;
 
@@ -49,6 +50,18 @@ public class ColourMap {
         }
         else
             current = null;
+    }
+
+    public byte[] toBytes()
+    {
+        byte[] res = new byte[order.size() * 7];
+        for (int cc = 0; cc < order.size(); cc++)
+        {
+            Colour colour = order.get(cc);
+            System.arraycopy(intsToBytes(Colour.argbToRgba(colour.getRGB())), 0, res, cc * 7, 4);
+            System.arraycopy(intsToBytes(3, true, counts.get(colour)), 0, res, cc * 7 + 4, 3);
+        }
+        return res;
     }
 
 }

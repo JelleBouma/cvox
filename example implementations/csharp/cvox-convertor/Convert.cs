@@ -8,8 +8,8 @@ namespace cvox_convertor
         public static async Task Main(string[] args)
         {
             string inputType = args[0].Split('.').Last();
-            Stream input = File.OpenRead(args[0]);
-            Stream output = File.OpenWrite(args[1]);
+            using Stream input = File.OpenRead(args[0]);
+            using Stream output = File.OpenWrite(args[1]);
             if (inputType == "vox")
                 CvoxWriter.Write(new CvoxMultimodel(await VoxReader.ReadAsync(input)), output);
             else

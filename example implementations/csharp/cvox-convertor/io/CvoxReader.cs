@@ -124,8 +124,7 @@ namespace cvox_convertor.io
 
         private static XYZ ReadXYZFromBytes(byte[] bytes)
         {
-            int zero = 0; // used to read unsigned value from a signed byte
-            return new XYZ(zero | bytes[0], zero | bytes[1], zero | bytes[2]);
+            return new XYZ(bytes[0], bytes[1], bytes[2]);
         }
     }
 }

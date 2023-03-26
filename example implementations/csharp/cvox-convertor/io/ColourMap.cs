@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using static cvox_convertor.utils.Extensions;
+using static cvox_convertor.utils.NumberUtilities;
+using System.Drawing;
 
 namespace cvox_convertor.io
 {
@@ -39,6 +41,18 @@ namespace cvox_convertor.io
             }
             countPointer++;
             return EndReached ? null : current;
+        }
+
+        public byte[] ToBytes()
+        {
+            byte[] res = new byte[Order.Count * 7];
+            for (int cc = 0; cc < Order.Count; cc++)
+            {
+                Color colour = Order[cc];
+                Array.Copy(IntsToBytes(colour.ToRgba()), 0, res, cc * 7, 4);
+                Array.Copy(IntsToBytes(3, true, Counts[colour]), 0, res, cc * 7 + 4, 3);
+            }
+            return res;
         }
 
         /**

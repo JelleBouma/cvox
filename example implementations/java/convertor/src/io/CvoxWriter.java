@@ -3,6 +3,8 @@ package io;
 import rifflike.Chunk;
 import rifflike.RiffWriter;
 import utils.EL;
+import utils.Grouping;
+import utils.Groups;
 import voxel.Colour;
 import voxel.Cube;
 import voxel.XYZ;
@@ -28,53 +30,30 @@ public class CvoxWriter {
                 byte[] translationBytes = intsToBytes(true, translation.x, translation.y, translation.z);
                 System.arraycopy(translationBytes, 0, size, 3, 12);
                 chunks.add(new Chunk(CvoxID.SIZE, size));
-                EL<Cube> voxels = model.filter(c -> c.low.equals(c.high));
-                EL<Cube> cubes = model.filter(c -> !c.low.equals(c.high));
-                if (cubes.size() > 0) {
-                    EL<EL<Cube>> sortedCubes = cubes.distribute((c1, c2) -> c1.colour.equals(c2.colour));
-                    byte[] cubeBytes = new byte[cubes.size() * 6];
-                    byte[] cmap = new byte[sortedCubes.size() * 7];
-                    int cubeCounter = 0;
-                    for (int cc = 0; cc < sortedCubes.size(); cc++) {
-                        EL<Cube> sameColourCubes = sortedCubes.get(cc);
-                        int rgba = Colour.argbToRgba(sameColourCubes.first().colour.getRGB());
-                        byte[] amountOfCubes = intsToBytes(3, true, sameColourCubes.size());
-                        System.arraycopy(intsToBytes(rgba), 0, cmap, cc * 7, 4);
-                        System.arraycopy(amountOfCubes, 0, cmap, cc * 7 + 4, 3);
-                        for (Cube cube : sameColourCubes) {
-                            cubeBytes[cubeCounter * 6] = (byte) cube.low.x;
-                            cubeBytes[cubeCounter * 6 + 1] = (byte) cube.low.y;
-                            cubeBytes[cubeCounter * 6 + 2] = (byte) cube.low.z;
-                            cubeBytes[cubeCounter * 6 + 3] = (byte) cube.high.x;
-                            cubeBytes[cubeCounter * 6 + 4] = (byte) cube.high.y;
-                            cubeBytes[cubeCounter * 6 + 5] = (byte) cube.high.z;
-                            cubeCounter++;
+                Groups<Colour, Cube> sortedCubes = model.filter(c -> !c.low.equals(c.high)).groupBy(c -> c.colour);
+                Groups<Colour, Cube> sortedVoxels = model.filter(c -> c.low.equals(c.high)).groupBy(c -> c.colour);
+                if (!sortedCubes.isEmpty()) {
+                    ColourMap cmap = new ColourMap();
+                    EL<XYZ> cubeXYZs = new EL<>();
+                    for (Grouping<Colour, Cube> group : sortedCubes) {
+                        cmap.add(group.key, group.size());
+                        for (Cube cube : group) {
+                            cubeXYZs.add(cube.low);
+                            cubeXYZs.add(cube.high);
                         }
                     }
-                    chunks.add(new Chunk(CvoxID.CMAP, cmap));
-                    chunks.add(new Chunk(CvoxID.CUBE, cubeBytes));
+                    chunks.add(new Chunk(CvoxID.CMAP, cmap.toBytes()));
+                    chunks.add(new Chunk(CvoxID.CUBE, xyzsToBytes(cubeXYZs)));
                 }
-                if (voxels.size() > 0) { // FIXME: refactor, duplicate code from cube writing
-                    EL<EL<Cube>> sortedVoxels = voxels.distribute((c1, c2) -> c1.colour.equals(c2.colour));
-                    byte[] xyzBytes = new byte[voxels.size() * 3];
-                    byte[] vmap = new byte[sortedVoxels.size() * 7];
-                    int voxelCounter = 0;
-                    for (int vv = 0; vv < sortedVoxels.size(); vv++) {
-                        EL<Cube> sameColourVoxels = sortedVoxels.get(vv);
-                        int rgba = Colour.argbToRgba(sameColourVoxels.first().colour.getRGB());
-                        byte[] amountOfVoxels = intsToBytes(3, true, sameColourVoxels.size());
-                        System.arraycopy(intsToBytes(rgba), 0, vmap, vv * 7, 4);
-                        System.arraycopy(amountOfVoxels, 0, vmap, vv * 7 + 4, 3);
-                        for (Cube voxel : sameColourVoxels) {
-                            XYZ xyz = voxel.low;
-                            xyzBytes[voxelCounter * 3] = (byte) xyz.x;
-                            xyzBytes[voxelCounter * 3 + 1] = (byte) xyz.y;
-                            xyzBytes[ voxelCounter * 3 + 2] = (byte) xyz.z;
-                            voxelCounter++;
-                        }
+                if (!sortedVoxels.isEmpty()) {
+                    ColourMap vmap = new ColourMap();
+                    EL<XYZ> voxelXYZs = new EL<>();
+                    for (Grouping<Colour, Cube> group : sortedVoxels) {
+                        vmap.add(group.key, group.size());
+                        voxelXYZs.addAll(group.convertAll(c -> c.low));
                     }
-                    chunks.add(new Chunk(CvoxID.VMAP, vmap));
-                    chunks.add(new Chunk(CvoxID.XYZ, xyzBytes));
+                    chunks.add(new Chunk(CvoxID.VMAP, vmap.toBytes()));
+                    chunks.add(new Chunk(CvoxID.XYZ, xyzsToBytes(voxelXYZs)));
                 }
             }
             for (Chunk chunk : chunks)
@@ -82,5 +61,18 @@ public class CvoxWriter {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static byte[] xyzsToBytes(EL<XYZ> xyzs)
+    {
+        byte[] res = new byte[xyzs.size() * 3];
+        for (int ii = 0; ii < xyzs.size(); ii++)
+        {
+            XYZ xyz = xyzs.get(ii);
+            res[ii * 3] = (byte)xyz.x;
+            res[ii * 3 + 1] = (byte)xyz.y;
+            res[ii * 3 + 2] = (byte)xyz.z;
+        }
+        return res;
     }
 }

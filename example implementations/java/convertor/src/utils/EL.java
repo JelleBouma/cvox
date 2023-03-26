@@ -23,20 +23,6 @@ public class EL <E> extends ArrayList<E> {
         return get(0);
     }
 
-    public E pop() {
-        return take(size() - 1);
-    }
-
-    public E take(int index) {
-        E res = get(index);
-        remove(index);
-        return res;
-    }
-
-    public EL<E> copy() {
-        return convertAll(e -> e);
-    }
-
     /**
      * A filter which does not modify this list, but returns a new list where each element is the result of a specified function.
      * The element at index x (ranged from 0 to list size - 1) in the returned list will be the result of the convertor function applied on element x in this list.
@@ -48,26 +34,10 @@ public class EL <E> extends ArrayList<E> {
         return stream().map(convertor).collect(Collectors.toCollection(EL<T>::new));
     }
 
-    /**
-     * @see java.util.stream.Stream#reduce(Object, BinaryOperator)
-     */
-    public E reduce(E identity, BinaryOperator<E> accumulator) {
-        return stream().reduce(identity, accumulator);
-    }
-
-    public EL<EL<E>> distribute(BiPredicate<E, E> distributor) {
-        EL<EL<E>> res = new EL<>();
-        forEachUndistributed: for (E undistributed : this) {
-            for (EL<E> re : res)
-                for (E distributed : re)
-                    if (distributor.test(undistributed, distributed)) {
-                        re.add(undistributed);
-                        continue forEachUndistributed;
-                    }
-            EL<E> bucket = new EL<>();
-            bucket.add(undistributed);
-            res.add(bucket);
-        }
+    public <K> Groups<K, E> groupBy(Function<E, K> selector) {
+        Groups<K, E> res = new Groups<>();
+        for (E el : this)
+            res.add(selector, el);
         return res;
     }
 
@@ -133,29 +103,6 @@ public class EL <E> extends ArrayList<E> {
             if (predicate.test(e))
                 res.add(e);
         return res;
-    }
-
-    public EL<E> radixLSDSort(Function<E, Integer> toIntFunction, int base, int limit) {
-        return radixLSDSort(toIntFunction, base, limit, EL::new);
-    }
-
-    public EL<E> radixLSDSort(Function<E, Integer> toIntFunction, int base, int limit, Supplier<EL<E>> supplier) {
-        EL<E>[] buckets = new EL[base];
-        for (int bb = 0; bb < base; bb++)
-            buckets[bb] = new EL<E>();
-        EL<Integer> integers = convertAll(toIntFunction);
-        for (int ee = 0; ee < size(); ee++) {
-            int integer = integers.get(ee);
-            buckets[integer % base].add(get(ee));
-            integers.set(ee, integer / base);
-        }
-        EL<E> sorted = supplier.get();
-        for (EL<E> bucket : buckets)
-            sorted.addAll(bucket);
-        if (limit > base)
-            return sorted.radixLSDSort(toIntFunction, base, limit / base);
-        else
-            return sorted;
     }
 
     @Override
